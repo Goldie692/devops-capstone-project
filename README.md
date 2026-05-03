@@ -8,7 +8,7 @@ This repository contains the starter code for the project in [**IBM-CD0285EN-Ski
 This repository contains all the info I'll be using for the capstone project.
 
 
-![Build Status](https://github.com/Goldie692/devops-capstone-project/actions/workflows/ci-build.yaml/badge.svg)
+
 
 
 

@@ -1,10 +1,6 @@
-name: CI Build
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+- name: Lint (flake8)
+  run: |
+    flake8 . --max-line-length=88
 
 permissions:
   contents: read

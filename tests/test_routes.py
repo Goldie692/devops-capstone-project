@@ -141,10 +141,12 @@ def test_get_account_list(self):
         data = resp.get_json()
         self.assertEqual(len(data), 5)
 
- def test_update_account(self):
+    def test_update_account(self):
         """It should Update an existing Account"""
-        # create an Account to update
-    
+        test_account = AccountFactory()
+        resp = self.client.post(BASE_URL, json=test_account.serialize())
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        
         def test_update_account(self):
         """It should Update an existing Account"""
         # create an Account to update

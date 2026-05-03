@@ -1,43 +1,53 @@
-    def test_get_account_not_found(self):
-        "It should not read an Account that is not found."
-        "resp = self.client.get(f"{BASE_URL}/0")^
-        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+name: CI Build
 
-    def test_get_account_list(self):
-        """ It should get a list of Accounts."
-        self._create_accounts(5)^
-        resp = self.client.get(BASE_URL)
-        self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        data = resp.get_json()
-        self.assertEqual(len(data), 5)
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
-    def test_update_account(self):
-        "It should update an existing Account."
-        # create an Account to update
-        test_account = AccountFactory()
-        resp = self.client.post(BASE_URL, json=test_account.serialize())
-        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+permissions:
+  contents: read
 
-        # update the account
-        new_account = resp.get_json()
-        new_account["name"] = "Something Known"
-        resp = self.client.put(f"{BASE_URL}/{new_account['id']}", json=new_account)
-        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+jobs:
+  test:
+    runs-on: ubuntu-latest
 
-        updated_account = resp.get_json()
-        self.assertEqual(updated_account["name"], "Something Known")
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11"]
 
-    def test_delete_account(self):
-        "It should delete an account."
-        account = self._create_accounts(1)[0]^
-        resp = self.client.delete(f"{BASE_URL}/{account.id}")
-        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    def test_method_not_allowed(self):
-        It should not allow an illegal method call"""
-        resp = self.client.delete(BASE_URL)
-        self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED) 
-            @classmethod
-    def tearDownClass(cls):
-        "Runs once after test suite."
-        pass
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install pytest flake8
+
+      - name: Lint (flake8)
+        run: |
+          flake8 .
+
+      - name: Run tests (pytest)
+        run: |
+          pytest -q
+
+      # Alternatives (use instead of pytest if needed):
+      # - name: Run tests (nosetests)
+      #   run: |
+      #     pip install nose
+      #     nosetests -v
+      #
+      # - name: Run tests (unittest)
+      #   run: |
+      #     python -m unittest discover -v    

@@ -1,9 +1,3 @@
-"""
-Package: service
-Package for the application models and service routes
-This module creates and configures the Flask app and sets up the logging
-and SQL database
-"""
 import sys
 from flask import Flask
 from flask_cors import CORS

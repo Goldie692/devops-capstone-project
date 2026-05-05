@@ -5,19 +5,20 @@ from flask_cors import CORS
 from service import config
 from service.common import log_handlers
 
-# 1. Create Flask application
+# Create Flask application
 app = Flask(__name__)
 app.config.from_object(config)
 
-# 2. Initialize Security Headers (Talisman) and CORS
+# Initialize Security Headers (Talisman) and CORS
 talisman = Talisman(app)
 CORS(app)
 
-# 3. Import the routes and models (to avoid circular imports)
+# Dependencies for the application
 # pylint: disable=wrong-import-position, cyclic-import, wrong-import-order
-from service import routes, models  # noqa: F401 E402
-from service.common import error_handlers, cli_commands  # noqa: F401 E402
+from service import routes, models  # noqa: F401, E402
+from service.common import error_handlers, cli_commands  # noqa: F401, E402
 
-# 4. Set up logging
+# Set up logging for production
 log_handlers.init_logging(app, "gunicorn.error")
+
 app.logger.info("Service initialized!")

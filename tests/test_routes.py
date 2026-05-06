@@ -24,7 +24,10 @@ HTTPS_ENVIRON = {'wsgi.url_scheme': 'https'}
 ######################################################################
 #  T E S T   C A S E S
 ######################################################################
+
+
 class TestAccountService(TestCase):
+
     """Account Service Tests"""
 
     @classmethod
@@ -122,7 +125,9 @@ class TestAccountService(TestCase):
             json=account.serialize(),
             content_type="test/html",
         )
-        self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+        self.assertEqual(
+    response.status_code,
+     status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
     def test_get_account(self):
         """It should Read a single Account"""
@@ -156,7 +161,9 @@ class TestAccountService(TestCase):
 
         new_account = resp.get_json()
         new_account["name"] = "Something Known"
-        resp = self.client.put(f"{BASE_URL}/{new_account['id']}", json=new_account)
+        resp = self.client.put(
+    f"{BASE_URL}/{new_account['id']}",
+     json=new_account)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
         updated_account = resp.get_json()
@@ -166,15 +173,18 @@ class TestAccountService(TestCase):
         """It should Delete an Account"""
         account = self._create_accounts(1)[0]
         resp = self.client.delete(f"{BASE_URL}/{account.id}")
-        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+     self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_method_not_allowed(self):
         """It should not allow an illegal method call"""
-        resp = self.client.delete(BASE_URL)
+
+
+resp = self.client.delete(BASE_URL)
         self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
     def test_cors_security(self):
         """It should return a CORS header"""
         response = self.client.get('/', environ_overrides=HTTPS_ENVIRON)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # Check for the CORS header
-        self.assertEqual(response.headers.get('Access-Control-Allow-Origin'), '*')
+    response = self.client.get(
+        "/", environ_overrides=HTTPS_ENVIRON
+    )

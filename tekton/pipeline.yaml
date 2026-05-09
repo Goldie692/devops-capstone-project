@@ -7,6 +7,8 @@ spec:
     - name: repo-url
     - name: branch
       default: "main"
+    - name: build-image
+      default: "image-registry.openshift-image-registry.svc:5000/$(context.pipelineRun.namespace)/accounts:latest"
   workspaces:
     - name: pipeline-workspace
   tasks:
@@ -20,7 +22,7 @@ spec:
       taskRef:
         name: git-clone
       workspaces:
-        - name: source
+        - name: output
           workspace: pipeline-workspace
       params:
         - name: url
@@ -55,3 +57,16 @@ spec:
           value: "-v --with-spec --spec-color"
       runAfter:
         - clone
+    - name: build
+      taskRef:
+        name: buildah
+        kind: ClusterTask
+      workspaces:
+        - name: source
+          workspace: pipeline-workspace
+      params:
+        - name: IMAGE
+          value: $(params.build-image)
+      runAfter:
+        - lint
+        - tests

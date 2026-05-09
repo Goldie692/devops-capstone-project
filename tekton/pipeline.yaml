@@ -20,7 +20,7 @@ spec:
       taskRef:
         name: git-clone
       workspaces:
-        - name: output
+        - name: source
           workspace: pipeline-workspace
       params:
         - name: url
@@ -40,5 +40,18 @@ spec:
           value: "python:3.9-slim"
         - name: args
           value: ["--count", "--max-complexity=10", "--max-line-length=127", "--statistics", "--exclude=venv", "--ignore=E122,W504,W292", "."]
+      runAfter:
+        - clone
+    - name: tests
+      taskRef:
+        name: nose
+      workspaces:
+        - name: source
+          workspace: pipeline-workspace
+      params:
+        - name: database_uri
+          value: "sqlite:///test.db"
+        - name: args
+          value: "-v --with-spec --spec-color"
       runAfter:
         - clone
